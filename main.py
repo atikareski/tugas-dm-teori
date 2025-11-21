@@ -3,13 +3,10 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# --- 1. KONSTANTA ---
 THRESHOLD_PRICE = 1200 # Euro
 
-# --- 2. MUAT MODEL DAN DATA ---
 @st.cache_resource
 def load_assets():
-    # Daftar file yang harus dimuat
     FILES = ['voting_classifier_model.pkl', 'preprocessor.pkl', 
              'model_accuracy.pkl', 'original_df_for_unique_values.pkl', 
              'feature_columns.pkl']
@@ -17,10 +14,8 @@ def load_assets():
     loaded_objects = {}
     try:
         for file_name in FILES:
-            # Pemuatan setiap file
             loaded_objects[file_name.split('.')[0]] = joblib.load(file_name)
-        
-        # Mengembalikan objek yang dimuat
+
         return (loaded_objects['voting_classifier_model'], 
                 loaded_objects['preprocessor'], 
                 loaded_objects['model_accuracy'], 
@@ -44,6 +39,7 @@ if voting_clf is not None:
     **Kategori Harga:**
     * **Premium/High-End (1):** Harga Jual > **1200 Euro**
     * **Standar/Non-Premium (0):** Harga Jual $\le$ **1200 Euro**
+    * Harga dalam bentuk Euro (mata uang Austria, Prancis, Jerman dan Lainnya) 
     """)
     st.markdown("---")
 
