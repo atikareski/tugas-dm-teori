@@ -39,7 +39,7 @@ if voting_clf is not None:
     **Kategori Harga:**
     * **Premium/High-End (1):** Harga Jual > **1200 Euro**
     * **Standar/Non-Premium (0):** Harga Jual $\le$ **1200 Euro**
-    * Harga dalam bentuk Euro (mata uang Austria, Prancis, Jerman dan Lainnya) 
+    Harga dalam bentuk Euro ( Mata Uang Negara  Austria, Prancis, Jerman dan Lainnya) 
     """)
     st.markdown("---")
 
