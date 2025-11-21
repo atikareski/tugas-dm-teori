@@ -7,18 +7,28 @@ import joblib
 THRESHOLD_PRICE = 1200 # Euro
 
 # --- 2. MUAT MODEL DAN DATA ---
-# Menggunakan st.cache_data untuk caching data dan st.cache_resource untuk model
 @st.cache_resource
 def load_assets():
+    # Daftar file yang harus dimuat
+    FILES = ['voting_classifier_model.pkl', 'preprocessor.pkl', 
+             'model_accuracy.pkl', 'original_df_for_unique_values.pkl', 
+             'feature_columns.pkl']
+    
+    loaded_objects = {}
     try:
-        voting_clf = joblib.load('voting_classifier_model.pkl')
-        preprocessor = joblib.load('preprocessor.pkl')
-        accuracies = joblib.load('model_accuracy.pkl')
-        original_df = joblib.load('original_df_for_unique_values.pkl')
-        feature_columns = joblib.load('feature_columns.pkl')
-        return voting_clf, preprocessor, accuracies, original_df, feature_columns
+        for file_name in FILES:
+            # Pemuatan setiap file
+            loaded_objects[file_name.split('.')[0]] = joblib.load(file_name)
+        
+        # Mengembalikan objek yang dimuat
+        return (loaded_objects['voting_classifier_model'], 
+                loaded_objects['preprocessor'], 
+                loaded_objects['model_accuracy'], 
+                loaded_objects['original_df_for_unique_values'], 
+                loaded_objects['feature_columns'])
+        
     except FileNotFoundError:
-        st.error("Assets (model/preprocessor/akurasi) belum ditemukan. Harap jalankan 'python train_model.py' terlebih dahulu.")
+        st.error("Aset (model/preprocessor/akurasi) belum ditemukan. Harap pastikan 'train_model.py' sudah dieksekusi dengan benar dan semua file .pkl tersedia.")
         return None, None, None, None, None
 
 voting_clf, preprocessor, accuracies, original_df, X_columns = load_assets()
@@ -34,10 +44,8 @@ if voting_clf is not None:
     **Kategori Harga:**
     * **Premium/High-End (1):** Harga Jual > **1200 Euro**
     * **Standar/Non-Premium (0):** Harga Jual $\le$ **1200 Euro**
-    
-    Model ini dikembangkan untuk mencapai **Akurasi Super (>90%)** melalui *preprocessing* data yang komprehensif.
-    ---
     """)
+    st.markdown("---")
 
     # --- SIDEBAR (Model Performance) (Aturan Main 3) ---
     st.sidebar.header("📊 Model Performance (Bukti Akurasi Super)")
@@ -49,7 +57,7 @@ if voting_clf is not None:
     st.sidebar.markdown("---")
     st.sidebar.subheader("Performa Model Ensemble")
     st.sidebar.metric("Akurasi VotingClassifier", f"{accuracies['voting']*100:.2f}%")
-    st.sidebar.caption("VotingClassifier adalah model yang digunakan untuk prediksi.")
+    st.sidebar.caption("VotingClassifier adalah model utama untuk prediksi.")
 
     # --- FORM INPUT (Aturan Main 3) ---
     st.header("Masukkan Spesifikasi Laptop Baru")
@@ -95,8 +103,8 @@ if voting_clf is not None:
                                     columns=X_columns)
 
         # Terapkan Preprocessing/Scaling yang sama
-        # Catatan: Kita menggunakan .toarray() karena model dilatih dengan dense data
-        input_data_processed = preprocessor.transform(input_data).toarray()
+        # .toarray() diperlukan karena model dilatih dengan dense array
+        input_data_processed = preprocessor.transform(input_data)
         
         # Prediksi menggunakan VotingClassifier
         prediction = voting_clf.predict(input_data_processed)
