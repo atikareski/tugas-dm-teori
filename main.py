@@ -30,8 +30,7 @@ voting_clf, preprocessor, accuracies, original_df, X_columns = load_assets()
 
 # --- 3. STREAMLIT INTERFACE ---
 if voting_clf is not None:
-    
-    # --- Judul & Deskripsi Project (Aturan Main 3) ---
+
     st.title("💻 Aplikasi Klasifikasi Harga Laptop: Premium vs. Standar")
     st.markdown("""
     Proyek ini menggunakan model **Ensemble (VotingClassifier)** yang menggabungkan kekuatan **Random Forest** dan **AdaBoost** untuk memprediksi kategori harga laptop baru.
@@ -42,10 +41,8 @@ if voting_clf is not None:
     """)
     st.markdown("---")
 
-    # --- SIDEBAR (Model Performance) (Aturan Main 3) ---
     st.sidebar.header("📊 Model Performance (Bukti Akurasi Super)")
-    
-    # Tampilkan Akurasi Random Forest sebagai bukti >90%
+
     st.sidebar.metric("Akurasi Random Forest (Model >90%)", f"{accuracies['rf']*100:.2f}%")
     st.sidebar.markdown(f"**Random Forest mencapai {accuracies['rf']*100:.2f}%**")
     
@@ -54,14 +51,11 @@ if voting_clf is not None:
     st.sidebar.metric("Akurasi VotingClassifier", f"{accuracies['voting']*100:.2f}%")
     st.sidebar.caption("VotingClassifier adalah model utama untuk prediksi.")
 
-    # --- FORM INPUT (Aturan Main 3) ---
     st.header("Masukkan Spesifikasi Laptop Baru")
-    
-    # Mengambil nilai unik dari data asli untuk dropdown
+
     unique_vals = {col: original_df[col].unique() for col in original_df.columns if original_df[col].dtype == 'object'}
 
     with st.form("prediction_form"):
-        # Bagian Input Kategorikal
         col1, col2 = st.columns(2)
         with col1:
             company = st.selectbox("1. Perusahaan (Company)", sorted(unique_vals['Company']))
@@ -88,23 +82,18 @@ if voting_clf is not None:
             primary_storage = st.number_input("14. Penyimpanan Primer (GB)", min_value=0, max_value=2048, value=256, step=128)
             secondary_storage = st.number_input("15. Penyimpanan Sekunder (GB)", min_value=0, max_value=2048, value=0, step=128)
         
-        submitted = st.form_submit_button("PREDIKSI KATEGORI HARGA")
+        submitted = st.form_submit_button("Prediksi Kategori Harga")
 
     if submitted:
-        # Buat DataFrame dari input user
         input_data = pd.DataFrame([[company, typename, inches, ram, os, weight, screen, 
                                     touchscreen, ips_panel, retina, cpu_company, cpu_freq, 
                                     primary_storage, secondary_storage, gpu_company]], 
                                     columns=X_columns)
 
-        # Terapkan Preprocessing/Scaling yang sama
-        # .toarray() diperlukan karena model dilatih dengan dense array
         input_data_processed = preprocessor.transform(input_data)
-        
-        # Prediksi menggunakan VotingClassifier
+
         prediction = voting_clf.predict(input_data_processed)
-        
-        # --- Result (Aturan Main 3) ---
+
         st.subheader("🎉 Hasil Prediksi Model Ensemble")
         if prediction[0] == 1:
             st.success(f"Laptop ini diprediksi berada di Kategori **PREMIUM/HIGH-END** (Diprediksi Harga > {THRESHOLD_PRICE} Euro). 🚀")
