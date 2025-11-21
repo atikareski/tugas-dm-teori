@@ -38,9 +38,9 @@ if voting_clf is not None:
     
     **Kategori Harga:**
     * **Premium/High-End (1):** Harga Jual > **1200 Euro**
-    * **Standar/Non-Premium (0):** Harga Jual $\le$ **1200 Euro**
-    /nHarga dalam bentuk Euro ( Mata Uang Negara  Austria, Prancis, Jerman dan Lainnya) 
+    * **Standar/Non-Premium (0):** Harga Jual $\le$ **1200 Euro** 
     """)
+    st.markdown.caption("Harga dalam bentuk Euro ( Mata Uang Negara  Austria, Prancis, Jerman dan Lainnya )")
     st.markdown("---")
 
     # --- SIDEBAR (Model Performance) (Aturan Main 3) ---
